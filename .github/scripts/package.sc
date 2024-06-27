@@ -5,7 +5,11 @@ import scala.util.Properties
 val platformSuffix: String =
   if Properties.isWin then "pc-win32"
   else if Properties.isLinux then "pc-linux"
-  else if Properties.isMac then "apple-darwin"
+  else if Properties.isMac then
+    sys.props("os.arch") match
+      case "aarch64" => "apple-darwin-arm64"
+      case "x86_64"  => "apple-darwin-x86_64"
+      case other     => sys.error(s"Unrecognized Mac architecture: $other")
   else sys.error(s"Unrecognized OS: ${sys.props("os.name")}")
 
 val artifactsPath = os.Path("artifacts", os.pwd)
